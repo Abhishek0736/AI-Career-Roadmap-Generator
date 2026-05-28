@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FDFBF7;
+  --foreground: #1E201E;
+  --card-bg: #F5F2EB;
+  --accent: #D8D2C4;
+  --btn-bg: #000000;
+  --btn-hover: #1c1d1c;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+/* Glassmorphism custom classes */
+.glass-panel {
+  background: rgba(245, 242, 235, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(216, 210, 196, 0.5);
+}
+
+.glass-panel-dark {
+  background: rgba(30, 32, 30, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(216, 210, 196, 0.3);
+}
+
+/* Glossy CTA Button */
+.glossy-btn {
+  background: linear-gradient(180deg, #1f201f 0%, #000000 100%);
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.15) inset,
+    0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glossy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.2) inset,
+    0 6px 16px 0 rgba(0, 0, 0, 0.25);
+  background: #111111;
+}
+
+.glossy-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+    0 2px 4px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FDFBF7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D8D2C4;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c3bcae;
+}
+
+/* Timeline Custom Styles */
+.timeline-line {
+  background: linear-gradient(180deg, #D8D2C4 0%, rgba(216, 210, 196, 0.2) 100%);
+}
+
+/* Custom transitions */
+.page-transition {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
