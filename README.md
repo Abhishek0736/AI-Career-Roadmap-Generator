@@ -1,6 +1,6 @@
 # AI Career Roadmap Generator
 
-A premium, production-ready full-stack career roadmap generator inspired by the high-end, minimal beige aesthetics of **Margdarshak AI** and modern SaaS startups. 
+A premium, production-ready full-stack career roadmap generator inspired by the high-end, minimal beige aesthetics of **PathCraft AI** and modern SaaS startups. 
 
 This application compiles structured learning timelines, progressive milestones, and hands-on project briefs tailored dynamically by career goals and experience level.
 

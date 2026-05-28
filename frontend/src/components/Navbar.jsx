@@ -17,7 +17,7 @@ export default function Navbar() {
             <Compass className="w-5 h-5" />
           </div>
           <span className="text-xl font-bold tracking-tight text-brand-slate flex items-center gap-1.5">
-            Margdarshak<span className="text-sm font-semibold px-2 py-0.5 rounded-full bg-brand-accent/50 text-brand-slate/80">AI</span>
+            PathCraft<span className="text-sm font-semibold px-2 py-0.5 rounded-full bg-brand-accent/50 text-brand-slate/80">AI</span>
           </span>
         </Link>
 

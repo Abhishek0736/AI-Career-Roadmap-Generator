@@ -42,7 +42,7 @@ export default function Hero() {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-brand-accent bg-brand-card/60 backdrop-blur-sm text-xs font-semibold text-brand-slate/80 mb-6 shadow-sm"
           >
             <Sparkles className="w-3.5 h-3.5 text-brand-slate" />
-            <span>Introducing Margdarshak AI v1.0</span>
+            <span>Introducing PathCraft AI v1.0</span>
           </motion.div>
 
           {/* Heading */}

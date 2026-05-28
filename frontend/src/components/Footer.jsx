@@ -9,11 +9,11 @@ export default function Footer() {
             <Compass className="w-3.5 h-3.5" />
           </div>
           <span className="text-sm font-bold tracking-tight text-brand-slate">
-            Margdarshak AI
+            PathCraft AI
           </span>
         </div>
         <p className="text-xs text-brand-slate/50">
-          &copy; {new Date().getFullYear()} Margdarshak AI. All rights reserved. Crafted for elite developers.
+          &copy; {new Date().getFullYear()} PathCraft AI. All rights reserved. Crafted for elite developers.
         </p>
       </div>
     </footer>

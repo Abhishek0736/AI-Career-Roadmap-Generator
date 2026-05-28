@@ -5,12 +5,19 @@ const mongoose = require("mongoose");
 // POST /api/roadmap/generate
 exports.generateRoadmap = async (req, res) => {
   try {
-    const { role, skills, experienceLevel } = req.body;
+    let { role, skills, experienceLevel } = req.body;
+
+    // Sanitize skills parameter (support comma-separated string or fallback to array)
+    if (typeof skills === "string") {
+      skills = skills.split(",").map(s => s.trim()).filter(s => s.length > 0);
+    } else if (!Array.isArray(skills)) {
+      skills = [];
+    }
 
     // Simple validation
-    if (!role || !skills || !experienceLevel) {
+    if (!role || skills.length === 0 || !experienceLevel) {
       return res.status(400).json({ 
-        message: "Missing required inputs: role, skills, and experienceLevel are required." 
+        message: "Missing required inputs: role, skills list, and experienceLevel are required." 
       });
     }
 

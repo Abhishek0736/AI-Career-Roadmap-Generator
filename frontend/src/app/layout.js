@@ -9,7 +9,7 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: "AI Career Roadmap Generator | Margdarshak AI Style",
+  title: "AI Career Roadmap Generator | PathCraft AI",
   description: "Generate beautiful, structured, and customized career roadmaps powered by intelligent guidance, tailored to your experience and skills.",
   metadataBase: new URL("http://localhost:3000"),
   openGraph: {
