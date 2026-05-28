@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import { Compass, Sparkles, History, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import Navbar from "@/components/Navbar";
@@ -90,20 +90,22 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-brand-cream">
+    <div className="flex flex-col min-h-screen bg-brand-bg">
       {/* Navigation */}
       <Navbar />
 
       <main className="flex-grow">
-        {/* Animated Hero Section */}
+        {/* Hero Section */}
         <Hero />
 
-        {/* Form Container */}
-        <div className="py-16 px-6 max-w-6xl mx-auto">
-          <RoadmapForm onSubmit={handleGenerate} isLoading={isLoading} />
-        </div>
+        {/* Generator Section */}
+        <section className="py-20 px-6 lg:px-8 relative">
+          <div className="max-w-7xl mx-auto">
+            <RoadmapForm onSubmit={handleGenerate} isLoading={isLoading} />
+          </div>
+        </section>
 
-        {/* Generator Output Preview */}
+        {/* Output Preview */}
         <AnimatePresence mode="wait">
           {isLoading && (
             <motion.div
@@ -111,7 +113,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="py-12 bg-[#F9F6EE] border-t border-b border-brand-accent/20"
+              className="bg-gradient-to-b from-brand-bg to-brand-card/50 border-t border-brand-border/40"
             >
               <Loader />
             </motion.div>
@@ -124,31 +126,44 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="py-16 bg-[#F9F6EE] border-t border-b border-brand-accent/20 px-6"
+              className="border-t border-brand-border/40 bg-gradient-to-b from-brand-bg via-brand-bg to-brand-card/30"
             >
-              <div className="max-w-4xl mx-auto">
-                {/* Meta details banner */}
-                <div className="glass-panel p-6 rounded-3xl mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                  <div>
-                    <span className="text-xs font-bold text-brand-slate/40 uppercase tracking-widest">Active Preview</span>
-                    <h2 className="text-2xl font-extrabold text-brand-slate">{activeRoadmap.role}</h2>
-                    <p className="text-xs text-brand-slate/60 mt-1">
-                      Experience: <strong className="text-brand-slate">{activeRoadmap.experienceLevel}</strong> &bull; 
-                      Generated for: <strong className="text-brand-slate">{activeRoadmap.skills?.join(", ")}</strong>
-                    </p>
-                  </div>
-                  <div className="flex gap-3 shrink-0">
-                    <button 
+              <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+                {/* Meta Details Banner */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="card-premium p-6 md:p-8 rounded-xl mb-8 border-2 border-brand-border"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div className="flex-1">
+                      <span className="text-xs font-bold uppercase tracking-widest text-brand-accent">Preview</span>
+                      <h2 className="text-3xl md:text-4xl font-bold text-brand-primary mt-2">{activeRoadmap.role}</h2>
+                      <div className="flex flex-wrap items-center gap-4 mt-4">
+                        <div>
+                          <p className="text-xs text-brand-text/60 uppercase tracking-wider">Experience Level</p>
+                          <p className="text-sm font-semibold text-brand-primary">{activeRoadmap.experienceLevel}</p>
+                        </div>
+                        <div className="h-4 w-px bg-brand-border" />
+                        <div>
+                          <p className="text-xs text-brand-text/60 uppercase tracking-wider">Current Skills</p>
+                          <p className="text-sm font-semibold text-brand-primary">{activeRoadmap.skills?.length} skills</p>
+                        </div>
+                      </div>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         setActiveRoadmap(null);
                         toast.success("Preview closed");
                       }}
-                      className="px-4 py-2 border border-brand-accent/80 hover:border-brand-slate bg-brand-cream text-brand-slate text-xs font-semibold rounded-xl transition-all"
+                      className="btn-secondary px-6 py-3 rounded-lg text-sm font-semibold transition-all w-full md:w-auto"
                     >
                       Close Preview
-                    </button>
+                    </motion.button>
                   </div>
-                </div>
+                </motion.div>
 
                 <Timeline roadmap={activeRoadmap.generatedRoadmap} currentSkills={activeRoadmap.skills} />
               </div>
@@ -156,63 +171,73 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Dashboard Quick History (Recent 3 roadmaps) */}
-        <section className="py-16 px-6 max-w-6xl mx-auto border-t border-brand-accent/30">
-          <div className="flex justify-between items-end mb-8">
-            <div>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-brand-slate/40">Dashboard History</span>
-              <h3 className="text-2xl font-extrabold text-brand-slate mt-1">Recent Roadmap Library</h3>
-            </div>
-            {history.length > 3 && (
-              <Link 
-                href="/history" 
-                className="group flex items-center gap-1 text-sm font-bold text-brand-slate hover:opacity-80 transition-opacity"
+        {/* Recent Roadmaps Section */}
+        {!isFetchingHistory && history.length > 0 && (
+          <section className="py-20 px-6 lg:px-8 border-t border-brand-border/40 bg-brand-bg">
+            <div className="max-w-7xl mx-auto">
+              <motion.div 
+                className="flex justify-between items-end mb-12"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6 }}
               >
-                <span>View All History</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            )}
-          </div>
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-brand-text/60">Your Library</span>
+                  <h3 className="text-4xl font-bold text-brand-primary mt-2">Recent Roadmaps</h3>
+                  <p className="text-brand-text/70 mt-2">Quick access to your saved career paths</p>
+                </div>
+                {history.length > 3 && (
+                  <Link 
+                    href="/history" 
+                    className="group flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-brand-border hover:border-brand-accent bg-brand-card hover:bg-brand-accent/5 transition-all"
+                  >
+                    <span className="text-sm font-semibold text-brand-primary">View All</span>
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                )}
+              </motion.div>
 
-          {isFetchingHistory ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="h-[220px] bg-brand-card/40 border border-brand-accent/40 rounded-[2rem] animate-pulse" />
-              ))}
+              {isFetchingHistory ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[1, 2, 3].map((n) => (
+                    <motion.div
+                      key={n}
+                      className="h-64 bg-brand-border/20 rounded-xl animate-pulse"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: n * 0.1 }}
+                    />
+                  ))}
+                </div>
+              ) : history.length === 0 ? null : (
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, staggerChildren: 0.1 }}
+                >
+                  {history.slice(0, 3).map((roadmap, idx) => (
+                    <motion.div
+                      key={roadmap._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    >
+                      <HistoryCard
+                        roadmap={roadmap}
+                        onView={setActiveRoadmap}
+                        onDelete={handleDeleteRoadmap}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
             </div>
-          ) : history.length === 0 ? (
-            /* Empty State */
-            <div className="glass-panel p-12 rounded-[2.5rem] border border-dashed border-brand-accent text-center flex flex-col items-center max-w-xl mx-auto">
-              <div className="w-12 h-12 rounded-2xl bg-brand-card flex items-center justify-center text-brand-slate/40 mb-4 border border-brand-accent">
-                <History className="w-6 h-6" />
-              </div>
-              <h4 className="text-lg font-bold text-brand-slate">No roadmaps generated yet</h4>
-              <p className="text-xs text-brand-slate/60 mt-1.5 max-w-sm leading-relaxed">
-                Your generated roadmaps will appear here for quick access. Use the generator form above to build your first learning timeline.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {history.slice(0, 3).map((item) => (
-                <HistoryCard
-                  key={item._id}
-                  roadmap={item}
-                  onView={(roadmap) => {
-                    setActiveRoadmap(roadmap);
-                    // Scroll smoothly to timeline
-                    setTimeout(() => {
-                      const timelineEl = document.getElementById("timeline-preview");
-                      if (timelineEl) {
-                        timelineEl.scrollIntoView({ behavior: "smooth", block: "start" });
-                      }
-                    }, 100);
-                  }}
-                  onDelete={handleDeleteRoadmap}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+          </section>
+        )}
       </main>
 
       {/* Footer */}

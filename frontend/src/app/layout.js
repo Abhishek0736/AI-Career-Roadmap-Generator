@@ -13,7 +13,7 @@ export const metadata = {
   description: "Generate beautiful, structured, and customized career roadmaps powered by intelligent guidance, tailored to your experience and skills.",
   metadataBase: new URL("http://localhost:3000"),
   openGraph: {
-    title: "AI Career Roadmap Generator",
+    title: "PathCraft AI - Career Roadmap Generator",
     description: "Generate structured, professional career development timelines instantly.",
     type: "website",
   },
@@ -21,27 +21,28 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${outfit.variable} font-outfit antialiased bg-brand-cream text-brand-slate`}
+        suppressHydrationWarning
+        className={`${outfit.variable} font-outfit antialiased bg-brand-bg text-brand-primary`}
       >
         <Toaster 
           position="bottom-right"
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#F5F2EB',
-              color: '#1E201E',
-              border: '1px solid rgba(216, 210, 196, 0.8)',
+              background: '#FCFBF8',
+              color: '#111111',
+              border: '1px solid rgba(232, 226, 216, 0.8)',
               fontFamily: 'var(--font-outfit)',
               fontSize: '14px',
               borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
             },
             success: {
               iconTheme: {
-                primary: '#1E201E',
-                secondary: '#F5F2EB',
+                primary: '#111111',
+                secondary: '#FCFBF8',
               },
             },
           }}

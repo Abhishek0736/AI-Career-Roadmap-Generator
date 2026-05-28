@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, Trash2, ArrowUpRight, Compass, ShieldAlert } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar, Trash2, Eye, AlertTriangle, Zap, TrendingUp, BookOpen } from "lucide-react";
 
 export default function HistoryCard({ roadmap, onView, onDelete }) {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -27,108 +28,164 @@ export default function HistoryCard({ roadmap, onView, onDelete }) {
   const getDifficultyColor = (level) => {
     switch (level) {
       case "Beginner":
-        return "bg-sky-50 text-sky-800 border-sky-200";
+        return { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", icon: BookOpen };
       case "Intermediate":
-        return "bg-amber-50 text-amber-800 border-amber-200";
+        return { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", icon: TrendingUp };
       case "Advanced":
-        return "bg-purple-50 text-purple-800 border-purple-200";
+        return { bg: "bg-purple-50", border: "border-purple-200", text: "text-purple-700", icon: Zap };
       default:
-        return "bg-brand-cream/60 border-brand-accent text-brand-slate";
+        return { bg: "bg-brand-bg", border: "border-brand-border", text: "text-brand-primary", icon: BookOpen };
     }
   };
 
+  const difficulty = getDifficultyColor(roadmap.experienceLevel);
+  const DifficultyIcon = difficulty.icon;
+
   return (
-    <div 
-      className="glass-panel p-6 rounded-[2rem] border border-brand-accent/50 hover:border-brand-slate/30 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between group relative overflow-hidden h-full min-h-[220px]"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      whileHover={{ y: -4 }}
+      className="h-full"
     >
-      {/* Delete Confirmation Overlay */}
-      {showConfirm && (
-        <div className="absolute inset-0 bg-brand-card/95 backdrop-blur-sm z-10 p-6 flex flex-col justify-between items-center text-center">
-          <div className="flex flex-col items-center gap-2 mt-2">
-            <div className="p-2 bg-red-50 text-red-600 rounded-full border border-red-200">
-              <ShieldAlert className="w-5 h-5 animate-pulse" />
-            </div>
-            <h4 className="text-sm font-bold text-brand-slate">Delete this roadmap?</h4>
-            <p className="text-xs text-brand-slate/60 px-4">This action is permanent and cannot be undone.</p>
-          </div>
-          <div className="flex gap-3 w-full">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowConfirm(false);
-              }}
-              className="flex-1 py-2 rounded-xl text-xs font-semibold border border-brand-accent bg-brand-cream hover:bg-brand-card text-brand-slate transition-colors"
+      <div className="card-premium p-6 md:p-8 rounded-xl border-2 border-brand-border hover:border-brand-accent/50 transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden group"
+      >
+        {/* Accent border top */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-accent via-brand-accent/50 to-transparent" />
+
+        {/* Delete Confirmation Overlay */}
+        <AnimatePresence>
+          {showConfirm && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 p-6 flex flex-col justify-between rounded-xl"
             >
-              Cancel
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="flex-1 py-2 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors flex items-center justify-center gap-1"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </button>
-          </div>
-        </div>
-      )}
+              <div className="flex flex-col items-center gap-3 text-center">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 0.5 }}
+                  className="p-3 bg-red-100 text-red-600 rounded-full border-2 border-red-200"
+                >
+                  <AlertTriangle className="w-6 h-6" />
+                </motion.div>
+                <h4 className="text-base font-bold text-brand-primary">Delete Roadmap?</h4>
+                <p className="text-sm text-brand-text">This action cannot be undone.</p>
+              </div>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowConfirm(false);
+                  }}
+                  className="flex-1 py-2.5 rounded-lg text-sm font-semibold border-2 border-brand-border bg-brand-bg hover:bg-brand-border/20 text-brand-primary transition-all"
+                >
+                  Keep It
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-700 text-white transition-all disabled:opacity-60 flex items-center justify-center gap-1"
+                >
+                  {isDeleting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {/* Main Card Content */}
-      <div>
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${getDifficultyColor(roadmap.experienceLevel)}`}>
-            {roadmap.experienceLevel}
-          </span>
-          <div className="flex items-center gap-1.5 text-xs text-brand-slate/50">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{formattedDate}</span>
-          </div>
-        </div>
-
-        <h4 className="text-lg font-bold text-brand-slate line-clamp-1 group-hover:text-black transition-colors mb-2">
-          {roadmap.role}
-        </h4>
-
-        {/* Skills Tag Cloud */}
-        <div className="mb-4">
-          <div className="flex flex-wrap gap-1 max-h-[50px] overflow-hidden relative">
-            {roadmap.skills && roadmap.skills.map((skill, idx) => (
-              <span 
-                key={idx} 
-                className="text-[10px] px-2 py-0.5 rounded-lg bg-brand-cream/65 border border-brand-accent/50 text-brand-slate/75"
+        {/* Main Content */}
+        <div>
+          {/* Header */}
+          <div className="flex items-start justify-between gap-3 mb-6">
+            <div className="flex-1">
+              <motion.div
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 font-semibold text-xs mb-4 ${difficulty.bg} ${difficulty.border} ${difficulty.text}`}
               >
-                {skill}
-              </span>
-            ))}
+                <DifficultyIcon className="w-3.5 h-3.5" />
+                {roadmap.experienceLevel}
+              </motion.div>
+              <h3 className="text-xl md:text-2xl font-bold text-brand-primary group-hover:text-brand-accent transition-colors line-clamp-2">
+                {roadmap.role}
+              </h3>
+            </div>
+          </div>
+
+          {/* Metadata */}
+          <div className="space-y-4 mb-6 pb-6 border-b border-brand-border/40">
+            <div className="flex items-center gap-2 text-sm text-brand-text">
+              <Calendar className="w-4 h-4 text-brand-accent" />
+              <span>{formattedDate}</span>
+            </div>
+
+            {/* Skills preview */}
+            {roadmap.skills && roadmap.skills.length > 0 && (
+              <div className="space-y-2">
+                <span className="text-xs font-semibold uppercase tracking-widest text-brand-primary/60">Current Skills</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {roadmap.skills.slice(0, 3).map((skill, idx) => (
+                    <motion.span
+                      key={idx}
+                      whileHover={{ scale: 1.05 }}
+                      className="px-2.5 py-1 rounded-md bg-brand-bg text-brand-text text-xs font-medium border border-brand-border/60"
+                    >
+                      {skill}
+                    </motion.span>
+                  ))}
+                  {roadmap.skills.length > 3 && (
+                    <span className="px-2.5 py-1 rounded-md bg-brand-bg text-brand-text text-xs font-medium border border-brand-border/60">
+                      +{roadmap.skills.length - 3}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Phase count */}
+            {roadmap.phases && (
+              <div className="text-xs text-brand-text/80">
+                <span className="font-semibold">{roadmap.phases.length}</span> phases to master your path
+              </div>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* Footer controls */}
-      <div className="flex items-center justify-between border-t border-brand-accent/30 pt-4 mt-auto">
-        <span className="text-xs text-brand-slate/50 font-medium">
-          {roadmap.generatedRoadmap?.phases?.length || 0} Phases
-        </span>
-
-        <div className="flex items-center gap-2">
-          <button
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onView(roadmap)}
+            className="flex-1 btn-primary text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 group"
+          >
+            <Eye className="w-4 h-4" />
+            <span>View Path</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={(e) => {
               e.stopPropagation();
               setShowConfirm(true);
             }}
-            className="p-2 text-brand-slate/40 hover:text-red-600 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-100 transition-all"
-            title="Delete Roadmap"
+            className="px-3 py-2.5 rounded-lg border-2 border-red-200 hover:bg-red-50 text-red-600 transition-all"
+            title="Delete roadmap"
           >
             <Trash2 className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onView(roadmap)}
-            className="glossy-btn text-brand-cream p-2 px-3.5 rounded-xl text-xs font-semibold flex items-center gap-1"
-          >
-            <span>View</span>
-            <ArrowUpRight className="w-3 h-3" />
-          </button>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

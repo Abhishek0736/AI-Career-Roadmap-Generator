@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, Terminal, BookOpen, Layers } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Sparkles, Zap, BookOpen, Layers, ArrowRight, AlertCircle } from "lucide-react";
 
 export default function RoadmapForm({ onSubmit, isLoading }) {
   const [role, setRole] = useState("");
@@ -29,7 +30,6 @@ export default function RoadmapForm({ onSubmit, isLoading }) {
     e.preventDefault();
     if (!validate()) return;
 
-    // Split skills by commas and clean whitespaces
     const skillsList = skills
       .split(",")
       .map((skill) => skill.trim())
@@ -42,122 +42,186 @@ export default function RoadmapForm({ onSubmit, isLoading }) {
     });
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
   return (
-    <div className="w-full max-w-2xl mx-auto" id="generator">
-      <div className="glass-panel p-8 sm:p-10 rounded-[2.5rem] shadow-xl relative overflow-hidden">
-        {/* Glow Element */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-brand-accent/30 rounded-full blur-xl pointer-events-none" />
+    <motion.div 
+      className="w-full max-w-3xl mx-auto"
+      id="generator"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+    >
+      <div className="card-premium p-8 md:p-12 rounded-2xl relative overflow-hidden">
+        {/* Ambient glow */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-brand-accent/30 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-extrabold text-brand-slate flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-brand-slate" />
-            Generate Custom Roadmap
-          </h2>
-          <p className="text-sm text-brand-slate/60 mt-1">
-            Fill in the parameters below to outline your tailored engineering path.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Target Role */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-brand-slate/85 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5" />
-              Target Career Role
-            </label>
-            <input
-              type="text"
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value);
-                if (errors.role) setErrors((prev) => ({ ...prev, role: "" }));
-              }}
-              placeholder="e.g. Frontend Developer, DevOps Engineer, UI/UX Designer"
-              className={`w-full px-4 py-3.5 bg-brand-cream/50 border ${
-                errors.role ? "border-red-400 focus:ring-red-200" : "border-brand-accent/80 focus:border-brand-slate"
-              } rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent/40 transition-all text-brand-slate placeholder-brand-slate/40`}
-              disabled={isLoading}
-            />
-            {errors.role && (
-              <p className="text-xs text-red-500 font-medium pl-1">{errors.role}</p>
-            )}
-          </div>
-
-          {/* Current Skills */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-brand-slate/85 flex items-center gap-1.5">
-              <Terminal className="w-3.5 h-3.5" />
-              Current Skills
-            </label>
-            <input
-              type="text"
-              value={skills}
-              onChange={(e) => {
-                setSkills(e.target.value);
-                if (errors.skills) setErrors((prev) => ({ ...prev, skills: "" }));
-              }}
-              placeholder="e.g. HTML, CSS, Basic JavaScript (comma separated)"
-              className={`w-full px-4 py-3.5 bg-brand-cream/50 border ${
-                errors.skills ? "border-red-400 focus:ring-red-200" : "border-brand-accent/80 focus:border-brand-slate"
-              } rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent/40 transition-all text-brand-slate placeholder-brand-slate/40`}
-              disabled={isLoading}
-            />
-            {errors.skills && (
-              <p className="text-xs text-red-500 font-medium pl-1">{errors.skills}</p>
-            )}
-            <p className="text-[11px] text-brand-slate/50 pl-1">
-              Adding existing skills allows the generator to customize which modules you skip or reinforce.
+        <div className="relative z-10">
+          {/* Header */}
+          <motion.div 
+            className="mb-10"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-brand-accent/20 to-brand-accent/10">
+                <Sparkles className="w-5 h-5 text-brand-accent" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-brand-primary">
+                Generate Your Roadmap
+              </h2>
+            </div>
+            <p className="text-brand-text text-lg">
+              Define your career goal and current skills. We&apos;ll create a personalized learning path.
             </p>
-          </div>
+          </motion.div>
 
-          {/* Experience level & Button */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-brand-slate/85 flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5" />
-                Experience Level
-              </label>
-              <div className="relative">
+          <form onSubmit={handleSubmit} className="space-y-7">
+            {/* Target Role */}
+            <FormField
+              label="Target Career Role"
+              icon={Layers}
+              error={errors.role}
+              delay={0.2}
+            >
+              <input
+                type="text"
+                value={role}
+                onChange={(e) => {
+                  setRole(e.target.value);
+                  if (errors.role) setErrors((prev) => ({ ...prev, role: "" }));
+                }}
+                placeholder="e.g. Frontend Developer, DevOps Engineer"
+                className={`w-full px-5 py-4 bg-brand-bg border-2 transition-all duration-300 rounded-xl text-base focus:outline-none ${
+                  errors.role 
+                    ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100" 
+                    : "border-brand-border hover:border-brand-accent/40 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/10"
+                } text-brand-primary placeholder-brand-text/50 disabled:opacity-50`}
+                disabled={isLoading}
+              />
+            </FormField>
+
+            {/* Current Skills */}
+            <FormField
+              label="Current Skills"
+              icon={Zap}
+              error={errors.skills}
+              hint="Enter skills separated by commas"
+              delay={0.3}
+            >
+              <input
+                type="text"
+                value={skills}
+                onChange={(e) => {
+                  setSkills(e.target.value);
+                  if (errors.skills) setErrors((prev) => ({ ...prev, skills: "" }));
+                }}
+                placeholder="e.g. HTML, CSS, JavaScript, React"
+                className={`w-full px-5 py-4 bg-brand-bg border-2 transition-all duration-300 rounded-xl text-base focus:outline-none ${
+                  errors.skills 
+                    ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100" 
+                    : "border-brand-border hover:border-brand-accent/40 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/10"
+                } text-brand-primary placeholder-brand-text/50 disabled:opacity-50`}
+                disabled={isLoading}
+              />
+            </FormField>
+
+            {/* Experience Level & Submit */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end pt-2">
+              <FormField
+                label="Experience Level"
+                icon={BookOpen}
+                delay={0.4}
+                inline
+              >
                 <select
                   value={experienceLevel}
                   onChange={(e) => setExperienceLevel(e.target.value)}
-                  className="w-full px-4 py-3.5 bg-brand-cream/50 border border-brand-accent/80 focus:border-brand-slate rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent/40 appearance-none text-brand-slate cursor-pointer"
+                  className="w-full px-5 py-4 bg-brand-bg border-2 border-brand-border hover:border-brand-accent/40 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/10 rounded-xl text-base focus:outline-none appearance-none transition-all duration-300 cursor-pointer text-brand-primary disabled:opacity-50"
                   disabled={isLoading}
                 >
-                  <option value="Beginner">Beginner (0 - 1 years)</option>
-                  <option value="Intermediate">Intermediate (1 - 3 years)</option>
+                  <option value="Beginner">Beginner (0-1 years)</option>
+                  <option value="Intermediate">Intermediate (1-3 years)</option>
                   <option value="Advanced">Advanced (3+ years)</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-brand-slate/60">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                <div className="pointer-events-none absolute inset-y-0 right-5 flex items-center text-brand-text">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                   </svg>
                 </div>
-              </div>
-            </div>
+              </FormField>
 
-            <div>
-              <button
+              <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full glossy-btn text-brand-cream py-3.5 px-6 rounded-2xl text-sm font-semibold tracking-wide flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-primary text-white px-8 py-4 rounded-xl text-base font-semibold tracking-wide flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed w-full md:col-span-1 h-14 group"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 }}
               >
                 {isLoading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-brand-cream border-t-transparent rounded-full animate-spin" />
-                    Generating...
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Generating...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
-                    Generate AI Roadmap
+                    <Sparkles className="w-5 h-5" />
+                    <span>Generate Path</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </>
                 )}
-              </button>
+              </motion.button>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </motion.div>
+  );
+}
+
+function FormField({ label, icon: Icon, error, hint, delay = 0, inline = false, children }) {
+  return (
+    <motion.div 
+      className="space-y-2.5"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+    >
+      <label className="block text-sm font-semibold text-brand-primary flex items-center gap-2">
+        <Icon className="w-4 h-4 text-brand-accent" />
+        {label}
+      </label>
+      <div className="relative">
+        {children}
+      </div>
+      {error && (
+        <motion.p 
+          className="text-sm text-red-500 font-medium flex items-center gap-1"
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <AlertCircle className="w-4 h-4" />
+          {error}
+        </motion.p>
+      )}
+      {hint && !error && (
+        <p className="text-sm text-brand-text/60">{hint}</p>
+      )}
+    </motion.div>
   );
 }

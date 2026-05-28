@@ -1,138 +1,215 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Clock, CheckCircle2, Trophy, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, Lightbulb, Code, BookOpen, Trophy, ArrowRight } from "lucide-react";
 
 export default function Timeline({ roadmap, currentSkills = [] }) {
   if (!roadmap || !roadmap.phases || roadmap.phases.length === 0) {
     return null;
   }
 
-  // Clean the current skills to check matches
   const normalizedSkills = currentSkills.map(s => s.toLowerCase().trim());
 
   const containerVariants = {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.15,
       },
     },
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 40 },
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } 
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } 
     },
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-8">
-      <div className="text-center mb-10">
-        <span className="text-xs font-extrabold uppercase tracking-widest text-brand-slate/40">Generated Timeline</span>
-        <h3 className="text-3xl font-extrabold text-brand-slate mt-1">Your Learning Pathway</h3>
-        <div className="w-12 h-1 bg-brand-slate mx-auto mt-3 rounded-full" />
+    <section className="relative py-20 px-6 lg:px-8" id="timeline-preview">
+      {/* Background decorations */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <motion.div 
+          animate={{ opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 15, repeat: Infinity }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-brand-accent/10 via-transparent to-transparent rounded-full blur-3xl"
+        />
       </div>
 
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        className="relative border-l-2 border-brand-accent/50 ml-4 sm:ml-8 pl-8 sm:pl-12 space-y-12"
-      >
-        {roadmap.phases.map((phase, index) => {
-          return (
-            <motion.div 
-              key={index} 
-              variants={cardVariants}
-              className="relative"
-            >
-              {/* Timeline Bullet Node */}
-              <div className="absolute -left-[45px] sm:-left-[61px] top-1.5 w-8 h-8 rounded-full bg-brand-slate border-4 border-brand-cream flex items-center justify-center text-brand-cream font-bold text-xs shadow-md">
-                {index + 1}
+      <div className="max-w-4xl mx-auto">
+        {/* Section Header */}
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="text-xs font-bold uppercase tracking-widest text-brand-text/60">Your Learning Journey</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-brand-primary mt-3 mb-4">
+            Phase-by-Phase Roadmap
+          </h2>
+          <p className="text-lg text-brand-text max-w-2xl mx-auto">
+            A structured path with milestones, skills, and projects tailored to your goal
+          </p>
+        </motion.div>
+
+        {/* Timeline */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="relative"
+        >
+          {/* Vertical connector line */}
+          <motion.div
+            initial={{ scaleY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="hidden md:block absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-brand-accent via-brand-accent/50 to-transparent origin-top"
+          />
+
+          <div className="space-y-8">
+            {roadmap.phases.map((phase, index) => (
+              <PhaseCard 
+                key={index}
+                phase={phase}
+                index={index}
+                normalizedSkills={normalizedSkills}
+                variants={cardVariants}
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function PhaseCard({ phase, index, normalizedSkills, variants }) {
+  const getPhaseIcon = () => {
+    const icons = [Lightbulb, Code, BookOpen, Trophy, CheckCircle2];
+    return icons[index % icons.length];
+  };
+
+  const PhaseIcon = getPhaseIcon();
+
+  return (
+    <motion.div 
+      variants={variants}
+      className="relative"
+    >
+      <div className="flex gap-0 md:gap-8">
+        {/* Timeline Node */}
+        <motion.div 
+          className="hidden md:flex flex-col items-center flex-shrink-0"
+          initial={{ scale: 0 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-accent to-amber-500 flex items-center justify-center text-white shadow-lg border-4 border-brand-bg relative z-10">
+            <PhaseIcon className="w-7 h-7" />
+          </div>
+          {index < 3 && (
+            <div className="h-12 w-1 bg-brand-border/40 mt-2" />
+          )}
+        </motion.div>
+
+        {/* Phase Content */}
+        <div className="flex-1 pt-2">
+          <motion.div
+            whileHover={{ y: -4 }}
+            className="card-premium p-8 md:p-10 rounded-xl relative overflow-hidden group"
+          >
+            {/* Card accent */}
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-accent to-transparent" />
+
+            <div className="relative">
+              {/* Phase Header */}
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+                <div>
+                  <div className="inline-flex items-center gap-2 mb-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-brand-accent">Phase {index + 1}</span>
+                    {phase.duration && (
+                      <span className="text-xs px-2 py-1 rounded-lg bg-brand-border/40 text-brand-text font-medium">
+                        {phase.duration}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-brand-primary mb-2 group-hover:text-brand-accent transition-colors">
+                    {phase.title}
+                  </h3>
+                </div>
               </div>
 
-              {/* Phase Card */}
-              <div className="glass-panel p-6 sm:p-8 rounded-[2rem] hover:shadow-lg transition-all duration-300 border border-brand-accent/60 group relative hover:border-brand-slate/30">
-                
-                {/* Header info */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                  <span className="text-xs font-bold text-brand-slate/50 uppercase tracking-widest">
-                    Phase {index + 1}
-                  </span>
-                  <div className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-accent/40 text-brand-slate">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{phase.duration || "Self-Paced"}</span>
-                  </div>
-                </div>
+              {/* Description */}
+              {phase.description && (
+                <p className="text-brand-text text-base leading-relaxed mb-6">
+                  {phase.description}
+                </p>
+              )}
 
-                {/* Phase Title */}
-                <h4 className="text-xl font-bold text-brand-slate mb-3 group-hover:text-black transition-colors">
-                  {phase.title}
-                </h4>
-
-                {/* Description - Optional field check */}
-                {phase.description && (
-                  <p className="text-sm text-brand-slate/75 leading-relaxed mb-4">
-                    {phase.description}
-                  </p>
-                )}
-
-                {/* Topics / Tech Stack */}
+              {/* Topics Grid */}
+              {phase.topics && phase.topics.length > 0 && (
                 <div className="mb-6">
-                  <span className="text-xs font-bold text-brand-slate/60 uppercase tracking-wider block mb-2">Core Tech Stack</span>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-brand-primary/70 mb-3 flex items-center gap-2">
+                    <Code className="w-4 h-4" />
+                    Core Technologies
+                  </h4>
                   <div className="flex flex-wrap gap-2">
-                    {phase.topics && phase.topics.map((topic, tIdx) => {
+                    {phase.topics.map((topic, tIdx) => {
                       const hasSkill = normalizedSkills.includes(topic.toLowerCase().trim()) || 
                                        normalizedSkills.some(skill => topic.toLowerCase().includes(skill));
                       return (
-                        <div 
-                          key={tIdx} 
-                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs border transition-colors ${
+                        <motion.div
+                          key={tIdx}
+                          whileHover={{ scale: 1.05 }}
+                          className={`px-4 py-2 rounded-lg font-medium text-sm transition-all border-2 ${
                             hasSkill 
-                              ? "bg-emerald-50 border-emerald-200 text-emerald-800 font-medium" 
-                              : "bg-brand-cream/60 border-brand-accent text-brand-slate/80"
+                              ? "bg-gradient-to-r from-emerald-50 to-emerald-50 border-emerald-300 text-emerald-700" 
+                              : "bg-brand-bg border-brand-border hover:border-brand-accent/60 text-brand-primary"
                           }`}
                         >
-                          {hasSkill && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
-                          <span>{topic}</span>
-                          {hasSkill && <span className="text-[9px] uppercase tracking-wide opacity-80">(Skill Base Match)</span>}
-                        </div>
+                          {hasSkill && <span className="mr-1">✓</span>}
+                          {topic}
+                        </motion.div>
                       );
                     })}
                   </div>
                 </div>
+              )}
 
-                {/* Hands-On Milestone Project */}
-                {phase.project && (
-                  <div className="bg-brand-cream/70 rounded-2xl p-4 border border-brand-accent/40 flex items-start gap-3">
-                    <div className="p-2 rounded-xl bg-brand-slate text-brand-cream mt-0.5">
-                      <Trophy className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-brand-slate/40 flex items-center gap-1">
-                        <Lightbulb className="w-3 h-3 text-brand-slate/50" />
-                        Milestone Project
-                      </span>
-                      <h5 className="text-sm font-bold text-brand-slate mt-0.5">
-                        {typeof phase.project === 'object' ? phase.project.title : phase.project}
-                      </h5>
-                      <p className="text-xs text-brand-slate/60 mt-1 leading-relaxed">
-                        {typeof phase.project === 'object' ? phase.project.description : `Build a professional-grade project to validate and demonstrate your knowledge of ${phase.title} topics.`}
-                      </p>
-                    </div>
+              {/* Projects */}
+              {phase.projects && phase.projects.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-brand-primary/70 mb-3 flex items-center gap-2">
+                    <Trophy className="w-4 h-4" />
+                    Milestone Projects
+                  </h4>
+                  <div className="space-y-2">
+                    {phase.projects.map((project, pIdx) => (
+                      <motion.div
+                        key={pIdx}
+                        whileHover={{ x: 4 }}
+                        className="flex items-start gap-3 p-3 rounded-lg bg-brand-bg/60 hover:bg-brand-bg transition-colors"
+                      >
+                        <ArrowRight className="w-4 h-4 text-brand-accent mt-0.5 flex-shrink-0" />
+                        <span className="text-brand-text">{project}</span>
+                      </motion.div>
+                    ))}
                   </div>
-                )}
-
-              </div>
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

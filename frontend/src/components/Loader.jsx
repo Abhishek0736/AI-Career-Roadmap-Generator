@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { Sparkles, Zap } from "lucide-react";
 
 const loadingSteps = [
   "Analyzing parameters...",
@@ -14,71 +15,132 @@ const loadingSteps = [
 
 export default function Loader() {
   const [loadingText, setLoadingText] = useState("Analyzing parameters...");
+  const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
-    let index = 0;
     const interval = setInterval(() => {
-      index = (index + 1) % loadingSteps.length;
-      setLoadingText(loadingSteps[index]);
+      setStepIndex((prev) => (prev + 1) % loadingSteps.length);
+      setLoadingText(loadingSteps[(stepIndex + 1) % loadingSteps.length]);
     }, 1800);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [stepIndex]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-12 px-6">
-      <div className="flex flex-col items-center justify-center text-center mb-10">
-        <div className="relative mb-4">
-          {/* Pulsing ring animation */}
-          <div className="absolute inset-0 w-12 h-12 rounded-full border-4 border-brand-slate/10 animate-ping" />
-          <div className="w-12 h-12 rounded-2xl bg-brand-slate flex items-center justify-center text-brand-cream relative">
-            <Sparkles className="w-6 h-6 animate-pulse" />
+    <section className="w-full py-20 px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        {/* Loading Animation */}
+        <motion.div 
+          className="flex flex-col items-center justify-center text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          {/* Animated Icon */}
+          <div className="relative mb-8">
+            {/* Outer rotating ring */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 w-24 h-24"
+            >
+              <div className="w-full h-full rounded-full border-3 border-transparent border-t-brand-accent border-r-brand-accent/60" />
+            </motion.div>
+
+            {/* Inner pulsing circle */}
+            <motion.div
+              animate={{ scale: [1, 1.15, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-24 h-24 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-accent/5 flex items-center justify-center relative"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-16 h-16 rounded-lg bg-gradient-to-br from-brand-primary to-brand-text flex items-center justify-center"
+              >
+                <Sparkles className="w-7 h-7 text-white" />
+              </motion.div>
+            </motion.div>
           </div>
+
+          {/* Loading Text */}
+          <motion.div
+            key={stepIndex}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h3 className="text-2xl md:text-3xl font-bold text-brand-primary mb-3">
+              Generating Your Path
+            </h3>
+            <p className="text-lg text-brand-text/80 mb-4">{loadingText}</p>
+            <p className="text-sm text-brand-text/60">
+              Our AI is crafting a personalized roadmap tailored to your goals
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* Progress Steps */}
+        <div className="space-y-4">
+          {loadingSteps.map((step, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0.5, x: -20 }}
+              animate={{
+                opacity: idx <= stepIndex ? 1 : 0.3,
+                x: 0,
+              }}
+              transition={{ duration: 0.5, delay: idx * 0.05 }}
+              className={`flex items-center gap-4 p-4 rounded-lg transition-all ${
+                idx < stepIndex
+                  ? "bg-gradient-to-r from-green-50 to-emerald-50 border border-emerald-200"
+                  : idx === stepIndex
+                  ? "bg-gradient-to-r from-brand-accent/10 to-amber-50 border border-brand-accent/40"
+                  : "bg-brand-bg border border-brand-border/30"
+              }`}
+            >
+              <motion.div
+                animate={idx < stepIndex ? { scale: [1.2, 1] } : idx === stepIndex ? { rotate: 360 } : {}}
+                transition={{
+                  duration: idx < stepIndex ? 0.4 : 2,
+                  repeat: idx === stepIndex ? Infinity : undefined,
+                }}
+                className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-semibold text-sm ${
+                  idx < stepIndex
+                    ? "bg-emerald-500 text-white"
+                    : idx === stepIndex
+                    ? "bg-brand-accent text-white"
+                    : "bg-brand-border text-brand-text"
+                }`}
+              >
+                {idx < stepIndex ? "✓" : idx === stepIndex ? <Zap className="w-4 h-4" /> : idx + 1}
+              </motion.div>
+              <span
+                className={`text-sm font-medium ${
+                  idx < stepIndex
+                    ? "text-emerald-700"
+                    : idx === stepIndex
+                    ? "text-brand-primary"
+                    : "text-brand-text/60"
+                }`}
+              >
+                {step}
+              </span>
+            </motion.div>
+          ))}
         </div>
-        <h4 className="text-lg font-bold text-brand-slate tracking-tight animate-pulse">
-          {loadingText}
-        </h4>
-        <p className="text-xs text-brand-slate/50 mt-1">
-          Building your professional career trajectory. Please stand by.
-        </p>
-      </div>
 
-      {/* Shimmer Cards */}
-      <div className="border-l-2 border-brand-accent/30 ml-8 pl-12 space-y-10">
-        {[1, 2].map((num) => (
-          <div key={num} className="relative animate-pulse">
-            {/* Pseudo-bullet node */}
-            <div className="absolute -left-[61px] top-1.5 w-8 h-8 rounded-full bg-brand-accent/50 border-4 border-brand-cream" />
-            
-            {/* Shimmer box */}
-            <div className="bg-brand-card/40 border border-brand-accent/30 p-6 rounded-[2rem] space-y-4">
-              <div className="flex justify-between items-center">
-                <div className="h-3 w-16 bg-brand-accent/60 rounded-full" />
-                <div className="h-6 w-20 bg-brand-accent/60 rounded-full" />
-              </div>
-              <div className="h-5 w-2/3 bg-brand-accent/80 rounded-md" />
-              <div className="h-4 w-full bg-brand-accent/40 rounded-md" />
-              
-              <div className="space-y-2 pt-2">
-                <div className="h-3 w-20 bg-brand-accent/50 rounded-full" />
-                <div className="flex gap-2">
-                  <div className="h-6 w-16 bg-brand-accent/40 rounded-lg" />
-                  <div className="h-6 w-20 bg-brand-accent/40 rounded-lg" />
-                  <div className="h-6 w-24 bg-brand-accent/40 rounded-lg" />
-                </div>
-              </div>
-
-              <div className="bg-brand-cream/50 rounded-xl p-3 flex gap-3 mt-4 border border-brand-accent/20">
-                <div className="w-8 h-8 rounded-lg bg-brand-accent/60 shrink-0" />
-                <div className="space-y-2 w-full">
-                  <div className="h-3 w-1/3 bg-brand-accent/60 rounded-md" />
-                  <div className="h-3 w-3/4 bg-brand-accent/40 rounded-md" />
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+        {/* Bottom encouragement */}
+        <motion.div
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-center mt-12"
+        >
+          <p className="text-sm text-brand-text/50">
+            Building excellence... this should take 10-30 seconds
+          </p>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }
