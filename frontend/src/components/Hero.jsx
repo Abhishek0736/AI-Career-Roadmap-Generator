@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, ArrowRight, Zap, Target, Compass } from "lucide-react";
 
+
 const SIMULATIONS = [
   { role: "Full Stack Engineer", action: "Mapping MERN stack architecture...", skill: "Next.js & Node" },
   { role: "Data Scientist", action: "Optimizing Machine Learning paths...", skill: "Python & TensorFlow" },
