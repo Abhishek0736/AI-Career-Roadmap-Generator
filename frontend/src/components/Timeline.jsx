@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, Lightbulb, Code, BookOpen, Trophy, ArrowRight } from "lucide-react";
 
+
 export default function Timeline({ roadmap, currentSkills = [] }) {
   if (!roadmap || !roadmap.phases || roadmap.phases.length === 0) {
     return null;
