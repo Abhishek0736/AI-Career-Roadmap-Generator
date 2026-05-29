@@ -20,10 +20,19 @@ app.use(rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 }));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://ai-career-roadmap-generator.vercel.app"
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
-  methods: ["GET", "POST", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
