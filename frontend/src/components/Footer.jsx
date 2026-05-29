@@ -5,6 +5,7 @@ import {
   ExternalLink,
   GitBranch
 } from "lucide-react";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
