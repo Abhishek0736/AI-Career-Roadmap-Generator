@@ -18,6 +18,10 @@ The goal is to build a working full-stack solution that:
 - displays a history of previous roadmaps,
 - supports viewing and deleting saved roadmaps.
 
+## Live Demo
+
+https://ai-career-roadmap-generator.vercel.app/
+
 ## Assessment Requirements Covered
 
 - Implement a **frontend** using Next.js and Tailwind CSS.
