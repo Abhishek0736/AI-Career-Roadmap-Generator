@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Zap } from "lucide-react";
 
+
 const loadingSteps = [
   "Analyzing parameters...",
   "Matching current skillset...",
